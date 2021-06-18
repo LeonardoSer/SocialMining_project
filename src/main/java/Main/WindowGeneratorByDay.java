@@ -21,6 +21,12 @@ public class WindowGeneratorByDay {
     // retrieve a document by month and day then it appends it to the 'result' array (so it appends a day of tweets to the window)
     private static ArrayList<Document> windowAppender(String month, String day, ArrayList<Document> result) throws IOException{
 
+        if(day.length() == 1){
+            day = "0" + day;
+        }
+
+
+
         IndexReader ir;
         Directory dir = new SimpleFSDirectory(FileSystems.getDefault().getPath("tweets_index"));
         ir = DirectoryReader.open(dir);
@@ -55,12 +61,15 @@ public class WindowGeneratorByDay {
         for(int i=0; i<len; i++){
 
             window = windowAppender(month, Integer.toString(Integer.parseInt(day) + j), window);
-            j++;
 
-            if(i == 31){
+            if(Integer.parseInt(day) + j == 31){
                 day = "1";
                 month = "feb";
                 j = 0;
+
+
+            }else{
+                j++;
             }
         }
         return window;
@@ -75,7 +84,11 @@ public class WindowGeneratorByDay {
         String month = "jan";
 
         while(!(day>28 && month.equals("feb"))){
-            allWindows.add(getWindow(month, Integer.toString(day), len));
+
+            ArrayList<Document> curr_window = getWindow(month, Integer.toString(day), len);
+            allWindows.add(curr_window);
+
+
             day += slide;
             if(day > 31){
                 day = -1 * (31 - day);

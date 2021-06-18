@@ -22,13 +22,29 @@ import java.util.zip.GZIPInputStream;
 public class main {
     public static void main(String[] args) throws IOException {
 
-        /*
-        String dataSet_path = "/home/leonardo/IdeaProjects/socialMining/src/main/java/Main/dataset_new.gz";
+/*
+        String dataSet_path = "/home/leonardo/IdeaProjects/socialMining/src/main/java/Main/dataset.gz";
         DatasetIndexer.indexDataSet(dataSet_path);
-         */
+*/
 
-        ArrayList<ArrayList<Document>> windows = WindowGeneratorByDay.getSlidingWindows(30, 100);
-        System.out.println(windows.get(0).size());
+        ArrayList<ArrayList<Document>> windows_byDay = WindowGeneratorByDay.getSlidingWindows(10, 5);
+        ArrayList<ArrayList<Document>> windows_byHour = WindowGeneratorByHours.getSlidingWindows(5, 60);
+
+        int i = 0;
+        for (ArrayList<Document> window:windows_byDay) {
+            System.out.println("window " + i + ", size -> " + window.size());
+            i++;
+        }
+
+        System.out.println("\n Ti piace il cazzo, lo vuoi il mio Stilo?\n ");
+
+        i = 0;
+        for (ArrayList<Document> window:windows_byHour) {
+            System.out.println("window " + i + ", size -> " + window.size());
+            i++;
+        }
+
+        windows_byDay.get(0).get(0).getField("text").tokenStream();
 
     }
 }

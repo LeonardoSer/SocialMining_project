@@ -17,14 +17,17 @@ import java.util.ArrayList;
 
 public class WindowGeneratorByHours {
 
-    public static ArrayList<Document> windowAppender(String month, String day, ArrayList<Document> result, String startHour) throws IOException{
+    public static ArrayList<Document> windowAppender(String month, String day, ArrayList<Document> result, String startHour, int len) throws IOException{
 
         String real_hour = startHour;
 
-        for(int i = Integer.parseInt(startHour); i < 120; i++) {
+        for(int i = Integer.parseInt(startHour); i < len*24; i++) {
 
             if(real_hour.length() == 1){
                 real_hour = "0" + real_hour;
+            }
+            if(day.length() == 1){
+                day = "0" + day;
             }
 
             IndexReader ir;
@@ -50,10 +53,6 @@ public class WindowGeneratorByHours {
                 result.add(doc);
             }
 
-            if(i == 119 ){
-                System.out.println(real_hour);
-            }
-
             real_hour = Integer.toString(Integer.parseInt(real_hour)+1);
 
             if(i % 24 == 0){
@@ -67,6 +66,32 @@ public class WindowGeneratorByHours {
         }
 
         return result;
+    }
+
+    public static ArrayList<ArrayList<Document>> getSlidingWindows(int len, int slide) throws IOException{
+        ArrayList<ArrayList<Document>> allWindows = new ArrayList<ArrayList<Document>>();
+        int day = 1;
+        String month = "jan";
+        int hour = 0;
+
+        while(!(day>28 && month.equals("feb"))){
+
+            ArrayList<Document> window= new ArrayList<Document>();
+            allWindows.add(windowAppender(month, Integer.toString(day), window, Integer.toString(hour), len));
+
+            hour += slide;
+            while(hour >= 24){
+                hour =-1 * (24 - hour);
+                day += 1;
+                if(day > 31){
+                    day = -1 * (31 - day);
+                    month = "feb";
+                }
+
+            }
+        }
+
+        return allWindows;
     }
 
 }
